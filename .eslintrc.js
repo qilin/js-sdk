@@ -24,5 +24,6 @@ module.exports = {
     "array-bracket-spacing": ["error", "never"],
     "quotes": ["error", "single"],
     "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
 };
