@@ -1,5 +1,12 @@
 ## This is JavaScript tools for Qilin
 
+### Сборка
+
+Запускаем сборку командой `yarn build` или `npm run build`.
+После этого в папке `dist` появится скрипт `sdk-qilin.js`.
+
+### Использование
+
 Подключаем SDK скрипт на страницу магазина и на страницы игр(которые открываются в iframe)
 
 `  <script src="sdk-qilin.js"></script>`
