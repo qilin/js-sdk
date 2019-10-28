@@ -11,15 +11,13 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
 
   const defaultAuth = async (meta: any, url: string) => {
     try {
-      const responce = await fetch(`${apiURL}/auth`, {
+      const response = await fetch(`${apiURL}/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ meta, url }),
       });
 
-      const { status } = responce;
-      const json = await responce.json();
-      if (status !== 200) throw new Error(`Responce status code ${status}`);
+      const json = await response.json();
       return json.meta;
     } catch (error) {
       console.error(error);
