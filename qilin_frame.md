@@ -4,7 +4,7 @@
 const qilinFrameHelper = qilinGameFrame(
   qilinProductUUID: string,
   apiURL: string,
-  onAuth?: (url: string, meta: any) => Promise
+  onAuth?: (meta: any, url: string) => Promise
 );
 ```
 
