@@ -17,8 +17,8 @@ export default (payFormCallback: PayFormCallback) => {
     const { data = {} } = event;
     const { type, payload = {} } = data;
     if (type !== SHOW_PAYMENT_FORM) return;
-    const { gameUid, userId, itemId } = payload;
-    payFormCallback(gameUid, userId, itemId)
+    const { qilinProductUUID, userId, itemId } = payload;
+    payFormCallback(qilinProductUUID, userId, itemId)
       .then(status => onFormClose(frame, status))
       .catch(err => {
         console.error(err);

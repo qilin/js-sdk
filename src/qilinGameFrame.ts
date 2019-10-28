@@ -1,26 +1,25 @@
 import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED } from './constants';
 import { Callback } from './types';
 
-export default (gameUid: string, authUrl: string, onAuth?: (meta: any, url: string) => any) => {
-  if (!gameUid) throw new Error('Game UID is required, but not provided');
-  if (!authUrl) throw new Error('Auth URL is required, but not provided');
+export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, url: string) => any) => {
+  if (!qilinProductUUID) throw new Error('Game UID is required, but not provided');
+  if (!apiURL) throw new Error('Api URL is required, but not provided');
 
-  const frameOrigin = window.location.hostname;
   const queryString = window.location.href;
   const callbacks: { [key: string]: Callback[] } = {};
   let isGameInitialized = false;
 
   const defaultAuth = async (meta: any, url: string) => {
     try {
-      const responce = await fetch(authUrl, {
+      const responce = await fetch(`${apiURL}/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ meta, url }),
       });
 
+      const { status } = responce;
       const json = await responce.json();
-      const { code } = json;
-      if (!code || code !== 200) throw new Error(`Responce code ${code}`);
+      if (status !== 200) throw new Error(`Responce status code ${status}`);
       return json.meta;
     } catch (error) {
       console.error(error);
@@ -60,18 +59,18 @@ export default (gameUid: string, authUrl: string, onAuth?: (meta: any, url: stri
 
     const data = {
       type: SHOW_PAYMENT_FORM,
-      payload: { gameUid, userId, itemId },
+      payload: { qilinProductUUID, userId, itemId },
     };
-    window.parent.postMessage(data, frameOrigin);
+    window.parent.postMessage(data, '*');
   };
 
   window.addEventListener('message', (event: MessageEvent) => {
     if (!isGameInitialized) return;
 
     const { data = {} } = event;
-    const { type, ...rest } = data;
+    const { type, payload } = data;
 
-    if (type === PAYMENT_FORM_CLOSED) dispatchEvent(PAYMENT_FORM_CLOSED, rest);
+    if (type === PAYMENT_FORM_CLOSED) dispatchEvent(PAYMENT_FORM_CLOSED, payload);
   });
 
   return {

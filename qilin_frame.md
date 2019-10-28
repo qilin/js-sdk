@@ -2,24 +2,25 @@
 
 ```
 const qilinFrameHelper = qilinGameFrame(
-  gameUid: string,
-  authUrl: string,
+  qilinProductUUID: string,
+  apiURL: string,
   onAuth?: (url: string, meta: any) => Promise
 );
 ```
 
 Создаем объект-хэлпер внутри тега script в iframe с игрой.
-Где `gameUid` - уникальный `uid` игры в базе `qilin`,
-`authUrl` - адрес сервера авторизации `qilin`,
+Где `qilinProductUUID` - уникальный `uid` игры в базе `qilin`,
+`apiURL` - адрес сервера`qilin`,
 а `onAuth` - функция авторизации, опциональный параметр. Если передается, то используется для авторизации. Если нет, то для авторизации используется функция по умолчанию, которая обращается к бэкенду `qilin` и возвращает промисс, который резолвится в объект вида:
 
 ```
 interface responce {
   code: number;
   meta: any;
+  msg?: string;
 }
 ```
-Где `code` код ответа от сервера, а `meta` - метаинформация, которая будет передана в игру после инициализации.
+Где `code` код ответа от сервера, `meta` - метаинформация, которая будет передана в игру после инициализации, а `msg` - опциональный параметр - какое-то сообщение или реджектится в ошибку.
 
 Для запуска авторизации вызываем метод `init` у объекта-хэлпера.
 
@@ -27,6 +28,9 @@ interface responce {
 qilinFrameHelper.init()
   .then((meta: any) => {
     ... Код игры
+  })
+  .catch(error => {
+    ... Обработка ошибки авторизации
   })
 ```
 
@@ -38,7 +42,7 @@ qilinFrameHelper.init()
 qilinFrameHelper.showPaymentForm(itemId, userId);
 ```
 
-После этого, данные вместе с `gameUid` будут с помощью `postMessage` отправлены в окно, открывшее iframe, и далее сервер-то-сервер обработка биллинга.
+После этого, данные вместе с `qilinProductUUID` будут с помощью `postMessage` отправлены в окно, открывшее iframe, и далее сервер-то-сервер обработка биллинга.
 
 После того, как платежная форма закроется, в окно игры также с помощью `postMessage` отправляется событие со статусом операции. `true` - успешно,`false` - отмена или ошибка при проведении операции.
 
@@ -49,5 +53,7 @@ const callback = (status: boolean) => {
   ...Запрос у сервера обновленного состояния
 };
 
-qilinFrameHelper.addCallback('PAYMENT_FORM_CLOSED', callback);
+qilinFrameHelper.addCallback(PAYMENT_FORM_CLOSED, callback);
 ```
+
+Где `PAYMENT_FORM_CLOSED` константа, доступная из SDK.
