@@ -4,15 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="./index.js"></script>
+  <script src="./sdk-qilin.js"></script>
   <title>Document</title>
 </head>
 <body style="background: grey; padding: 20%">
   <h2>Parent page</h2>
   <iframe src="frame.html" frameborder="0"></iframe>
   <script>
-    const payFormCallback = () => new Promise(resolve => {
-      const responce = confirm('Payment?');
+    const payFormCallback = (qilinProductUUID, userId, itemId) => new Promise(resolve => {
+      const responce = confirm(`Payment form with args from iframe. Args: ${JSON.stringify({
+        qilinProductUUID, userId, itemId,
+      })}`);
       resolve(responce);
     })
     const helper = qilinGameParent(payFormCallback);

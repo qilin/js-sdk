@@ -4,21 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="./index.js"></script>
+  <script src="./sdk-qilin.js"></script>
   <title>Document</title>
 </head>
 <body style="background: yellow">
   <h2>Iframe page</h2>
   <script>
-    const exampleOnAuth = (url, meta) => new Promise(resolve => resolve(meta));
-    const helper = qilinGameFrame('1', 'http://localhost:8082/sdk/v1', exampleOnAuth);  
+    const mockExampleOnAuth = (meta, url) => new Promise(resolve => resolve(meta));
+
+    const helper = qilinGameFrame('1', 'http://localhost:8082/sdk/v1', mockExampleOnAuth);  
     helper.init({ meta: 'Some meta data' }). // Метаданные, будут переданы в функцию авторизации
       then(meta => { // Метаданные, полученные при авторизации
         console.log(meta);
         helper.addCallback(PAYMENT_FORM_CLOSED, args => console.log(args))
         setTimeout(() => helper.showPaymentForm('22', '33'), 5000);
+        // Called showPaymentForm after 5 seconds
+        // This params will send to parent page
       })
       .catch(err => console.log(err));
+
   </script>
 </body>
 </html>
