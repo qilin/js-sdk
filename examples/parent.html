@@ -9,15 +9,40 @@
 </head>
 <body style="background: grey; padding: 20%">
   <h2>Parent page</h2>
-  <iframe src="frame.html" frameborder="0"></iframe>
+  <button id="show_iframe">Открыть iframe</button>
+  <iframe id='game_iframe' style="width: 60%; height: 60%; display: none" frameborder="0"></iframe>
   <script>
-    const payFormCallback = (qilinProductUUID, userId, itemId) => new Promise(resolve => {
-      const responce = confirm(`Payment form with args from iframe. Args: ${JSON.stringify({
-        qilinProductUUID, userId, itemId,
-      })}`);
-      resolve(responce);
-    })
-    const helper = qilinGameParent(payFormCallback);
+    const showIframeButton = document.querySelector('#show_iframe');
+    const gameIframe = document.querySelector('#game_iframe');
+    showIframeButton.onclick = () => {
+      const isIframeVisible = gameIframe.style.display === 'block';
+      gameIframe.style.display = isIframeVisible
+        ? 'none'
+        : 'block';
+      gameIframe.src = './frame.html';
+      showIframeButton.textContent = isIframeVisible
+        ? 'Открыть iframe'
+        : 'Закрыть iframe'
+    };
+
+    // const helper = qilinGameParent('1', 'http://localhost:8082/sdk/v1');
+    // helper.init()
+    //   .then(meta => {
+    //     const { url } = meta;
+    //     const showIframeButton = document.querySelector('#show_iframe');
+    //     showIframeButton.onclick = () => {
+    //       const gameIframe = document.createElement('iframe');
+    //       gameIframe.style = {
+    //         position: 'absolute',
+    //         top: '20%',
+    //         left: '20%',
+    //         width: '60%',
+    //         height: '60%',
+    //       };
+    //       gameIframe.src = url;
+    //       document.body.appendChild(gameIframe);
+    //     };
+    //   })
   </script>
 </body>
 </html>
