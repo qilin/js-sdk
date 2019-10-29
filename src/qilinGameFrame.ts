@@ -1,5 +1,6 @@
 import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED } from './constants';
 import { Callback } from './types';
+import getAuthFunction from './getAuthFunction';
 
 export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, url: string) => any) => {
   if (!qilinProductUUID) throw new Error('Game UID is required, but not provided');
@@ -8,22 +9,7 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
   const queryString = window.location.href;
   const callbacks: { [key: string]: Callback[] } = {};
   let isGameInitialized = false;
-
-  const defaultAuth = async (meta: any, url: string) => {
-    try {
-      const response = await fetch(`${apiURL}/auth`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meta, url }),
-      });
-
-      const json = await response.json();
-      return json.meta;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+  const defaultAuth = getAuthFunction(apiURL);
 
   const init = async (inputMeta: any) => {
     try {
