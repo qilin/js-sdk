@@ -13,7 +13,7 @@
   <iframe id='game_iframe' style="width: 100%; height: 300px; display: none" frameborder="0"></iframe>
   <script>
     // create SDK helper
-    const helper = qilinGameParent('1', 'http://localhost:8082/sdk/v1');
+    const helper = qilinGameParent('1', 'http://localhost:8084/sdk/v1');
 
     // create PayFormCallback
     const showPayment = (...args) => new Promise(resolve => {
@@ -22,12 +22,12 @@
     });
 
     // init SDK helper
-    helper.init('file:///home/ben/qilin/js-sdk/examples/frame.html?jwt=hghgkgkhj')
+    helper.init({ url: 'file:///home/ben/qilin/js-sdk/examples/frame.html?jwt=hghgkgkhj' })
       .then(meta => {
         // TODO replace meta from string to object
         // Now Auth server not support object in meta
         // const { url } = meta;
-        const url = meta;
+        const { url } = meta;
 
         // Create iframe with src = url
         const showIframeButton = document.querySelector('#show_iframe');
