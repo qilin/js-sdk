@@ -22,16 +22,21 @@
   </form>
   <script>
     const helper = qilinGameFrame('1', 'http://localhost:8082/sdk/v1');  
-    helper.init('Some meta data'). // Метаданные, будут переданы в функцию авторизации
-      then(meta => { // Метаданные, полученные при авторизации
+    helper.init('Some meta data'). // Metadata will provide to auth function
+      then(meta => { 
+        // Metadata from auth server
         console.log(meta);
-        helper.addCallback(PAYMENT_FORM_CLOSED, args => console.log(args))
-        function onFormSubmit(event) {
+
+        // Set callback, will called after close payment form on parent page.
+        helper.addCallback(PAYMENT_FORM_CLOSED, args => console.log(args));
+
+        // Call showPaymentForm with form values
+        const onFormSubmit = event => {
           event.preventDefault();
-          const { userId, itemId } = this;
-          console.log(itemId, userId);
-          helper.showPaymentForm(itemId, userId);
+          const { userId, itemId } = event.target;
+          helper.showPaymentForm(itemId.value, userId.value);
         }
+
         document.querySelector('#payment_form').onsubmit = onFormSubmit;
       })
       .catch(err => console.log(err));

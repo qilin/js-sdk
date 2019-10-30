@@ -12,37 +12,39 @@
   <button id="show_iframe">Открыть iframe</button>
   <iframe id='game_iframe' style="width: 100%; height: 300px; display: none" frameborder="0"></iframe>
   <script>
-    const showIframeButton = document.querySelector('#show_iframe');
-    const gameIframe = document.querySelector('#game_iframe');
-    showIframeButton.onclick = () => {
-      const isIframeVisible = gameIframe.style.display === 'block';
-      gameIframe.style.display = isIframeVisible
-        ? 'none'
-        : 'block';
-      gameIframe.src = './frame.html?jwt=uyuiyiiuhiu';
-      showIframeButton.textContent = isIframeVisible
-        ? 'Открыть iframe'
-        : 'Закрыть iframe'
-    };
+    // create SDK helper
+    const helper = qilinGameParent('1', 'http://localhost:8082/sdk/v1');
 
-    // const helper = qilinGameParent('1', 'http://localhost:8082/sdk/v1');
-    // helper.init()
-    //   .then(meta => {
-    //     const { url } = meta;
-    //     const showIframeButton = document.querySelector('#show_iframe');
-    //     showIframeButton.onclick = () => {
-    //       const gameIframe = document.createElement('iframe');
-    //       gameIframe.style = {
-    //         position: 'absolute',
-    //         top: '20%',
-    //         left: '20%',
-    //         width: '60%',
-    //         height: '60%',
-    //       };
-    //       gameIframe.src = url;
-    //       document.body.appendChild(gameIframe);
-    //     };
-    //   })
+    // create PayFormCallback
+    const showPayment = (...args) => new Promise(resolve => {
+      const status = confirm(args);
+      resolve(status);
+    });
+
+    // init SDK helper
+    helper.init('file:///home/ben/qilin/js-sdk/examples/frame.html?jwt=hghgkgkhj')
+      .then(meta => {
+        // TODO replace meta from string to object
+        // Now Auth server not support object in meta
+        // const { url } = meta;
+        const url = meta;
+
+        // Create iframe with src = url
+        const showIframeButton = document.querySelector('#show_iframe');
+        const gameIframe = document.querySelector('#game_iframe');
+        showIframeButton.onclick = () => {
+          const isIframeVisible = gameIframe.style.display === 'block';
+          gameIframe.style.display = isIframeVisible
+            ? 'none'
+            : 'block';
+          gameIframe.src = url;
+          showIframeButton.textContent = isIframeVisible
+            ? 'Открыть iframe'
+            : 'Закрыть iframe'
+        };
+
+        helper.onShowPayForm(showPayment);
+      })
   </script>
 </body>
 </html>
