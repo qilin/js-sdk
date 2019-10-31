@@ -22,11 +22,8 @@
     });
 
     // init SDK helper
-    helper.init({ url: 'file:///home/ben/qilin/js-sdk/examples/frame.html?jwt=hghgkgkhj' })
+    helper.init({ url: './frame.html?jwt=hghgkgkhj' })
       .then(meta => {
-        // TODO replace meta from string to object
-        // Now Auth server not support object in meta
-        // const { url } = meta;
         const { url } = meta;
 
         // Create iframe with src = url
