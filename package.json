@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "parcel build src/index.ts --out-file sdk-qilin.js",
+    "build:adapter": "parcel build adapter/index.ts --out-file qilin-store-adapter.js",
     "lint": "eslint './**/*.{ts,tsx}'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
