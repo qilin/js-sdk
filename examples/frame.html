@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./sdk-qilin.js"></script>
+  <title>Document</title>
+</head>
+<body style="background: yellow">
+  <h2>Iframe page</h2>
+  <form id="payment_form">
+    <fieldset>
+      <legend>User ID</legend>
+      <input type="text" name="userId">
+    </fieldset>
+    <fieldset>
+      <legend>Item ID</legend>
+      <input type="text" name="itemId">
+    </fieldset>
+    <button type="submit">Купить</button>
+  </form>
+  <script>
+    const helper = qilinGameFrame('1', 'http://localhost:8084/sdk/v1');  
+    helper.init('Some meta data'). // Metadata will provide to auth function
+      then(meta => { 
+        // Metadata from auth server
+        console.log(meta);
+
+        // Set callback, will called after close payment form on parent page.
+        helper.addCallback(PAYMENT_FORM_CLOSED, args => console.log(args));
+
+        // Call showPaymentForm with form values
+        const onFormSubmit = event => {
+          event.preventDefault();
+          const form = event.target;
+          const { userId, itemId } = form;
+          helper.showPaymentForm(itemId.value, userId.value);
+          form.reset();
+        }
+
+        document.querySelector('#payment_form').onsubmit = onFormSubmit;
+      })
+      .catch(err => console.log(err));
+
+  </script>
+</body>
+</html>

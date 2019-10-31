@@ -9,6 +9,7 @@ export default (apiURL: string) => async (meta: any, url: string, qilinProductUU
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+
     const json = await response.json();
     return json.meta;
   } catch (error) {
