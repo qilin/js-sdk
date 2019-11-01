@@ -23,6 +23,8 @@ module.exports = {
     "object-curly-spacing": ["error", "always"],
     "array-bracket-spacing": ["error", "never"],
     "quotes": ["error", "single"],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
+    "eol-last": ["error", "always"],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off"
   },

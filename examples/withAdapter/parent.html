@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./sdk-qilin.js"></script>
+  <title>Document</title>
+</head>
+<body style="background: grey; padding: 10%;">
+  <h2>Parent page</h2>
+  <button id="show_iframe">Открыть iframe</button>
+  <iframe id='game_iframe' style="width: 100%; height: 300px; display: none" frameborder="0"></iframe>
+  <script>
+    // create SDK helper
+    const helper = qilinGameParent('1', 'http://localhost:8084/sdk/v1');
+
+    // create PayFormCallback
+    const showPayment = (...args) => new Promise(resolve => {
+      const status = confirm(args);
+      resolve(status);
+    });
+
+    // init SDK helper
+    helper.init({ url: './adapter.html?jwt=hghgkgkhj' })
+      .then(meta => {
+        const { url } = meta;
+
+        // Create iframe with src = url
+        const showIframeButton = document.querySelector('#show_iframe');
+        const gameIframe = document.querySelector('#game_iframe');
+        showIframeButton.onclick = () => {
+          const isIframeVisible = gameIframe.style.display === 'block';
+          gameIframe.style.display = isIframeVisible
+            ? 'none'
+            : 'block';
+          gameIframe.src = url;
+          showIframeButton.textContent = isIframeVisible
+            ? 'Открыть iframe'
+            : 'Закрыть iframe'
+        };
+
+        helper.onShowPayForm(showPayment);
+      })
+  </script>
+</body>
+</html>
