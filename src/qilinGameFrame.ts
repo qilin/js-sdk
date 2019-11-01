@@ -35,7 +35,7 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
     callbacks[eventType] = eventCallbacks;
   };
 
-  const showPaymentForm = (itemId: string, userId: string) => {
+  const showPaymentForm = (itemId: string, userId: string, productUID?: string) => {
     if (!isGameInitialized) {
       alert('Game is not initialized!');
       return;
@@ -43,7 +43,7 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
 
     const data = {
       type: SHOW_PAYMENT_FORM,
-      payload: { qilinProductUUID, userId, itemId },
+      payload: { qilinProductUUID: productUID || qilinProductUUID, userId, itemId },
     };
     window.parent.postMessage(data, '*');
   };
