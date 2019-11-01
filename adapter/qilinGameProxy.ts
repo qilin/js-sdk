@@ -1,6 +1,6 @@
-import qilinGameFrame from '../src/qilinGameFrame';
 import { PROXY } from './constants';
 import openIframe from './openIframe';
+import qilinGameFrame from '../src/qilinGameFrame';
 import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM } from '../src/constants';
 
 export default (apiURL: string) => {
@@ -13,7 +13,11 @@ export default (apiURL: string) => {
   const payFormCallback = (args: any) => {
     if (!gameFrame) return;
 
-    gameFrame.postMessage(PAYMENT_FORM_CLOSED, args);
+    const data = {
+      type: PAYMENT_FORM_CLOSED,
+      payload: args,
+    };
+    gameFrame.postMessage(data, '*');
   };
 
   const init = async (inputMeta: any) => {
@@ -41,50 +45,7 @@ export default (apiURL: string) => {
       throw error;
     }
   };
-
   return {
     init,
   };
 };
-
-
-// import qilinGameParent from '../src/qilinGameParent';
-// import { PROXY } from './constants';
-// import openIframe from './openIframe';
-// import { PAYMENT_FORM_CLOSED } from '../src/constants';
-
-// const payFormCallback = ()
-
-// export default (apiURL: string) => {
-//   if (!apiURL) throw new Error('Api URL is required, but not provided');
-
-//   const proxy = qilinGameParent(PROXY, apiURL);
-//   let isGameInitialized = false;
-
-//   const init = async (inputMeta: any) => {
-//     try {
-//       const meta = await proxy.init(inputMeta);
-//       const { url } = meta;
-//       isGameInitialized = true;
-//       openIframe(url);
-
-//       window.addEventListener('message', (event: MessageEvent) => {
-//         if (!isGameInitialized) return;
-
-//         const { data = {} } = event;
-//         const { type, payload } = data;
-
-//         if (type === PAYMENT_FORM_CLOSED) dispatchEvent(PAYMENT_FORM_CLOSED, payload);
-//       });
-
-//     } catch (error) {
-//       console.error(error);
-//       throw error;
-//     }
-
-//   };
-
-//   return {
-//     init,
-//   };
-// };

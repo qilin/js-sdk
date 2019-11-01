@@ -4,8 +4,8 @@
   "description": "SDK package for qilin store",
   "main": "lib/index.js",
   "scripts": {
-    "build": "parcel build src/index.ts --out-file sdk-qilin.js",
-    "build:adapter": "parcel build adapter/index.ts --out-file qilin-store-adapter.js",
+    "build": "parcel build src/index.ts --out-file sdk-qilin.js && cp dist/sdk-qilin.js examples/simple/ && cp dist/sdk-qilin.js examples/withAdapter/",
+    "build:adapter": "parcel build adapter/index.ts --out-file qilin-store-adapter.js && cp dist/qilin-store-adapter.js examples/withAdapter/",
     "lint": "eslint './**/*.{ts,tsx}'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
