@@ -1,5 +1,5 @@
 import { PayFormCallback } from 'types';
-import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED } from './constants';
+import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from './constants';
 import getAuthFunction from './getAuthFunction';
 
 export default (qilinProductUUID: string, apiURL: string) => {
@@ -8,6 +8,8 @@ export default (qilinProductUUID: string, apiURL: string) => {
 
   const queryString = window.location.href;
   let payFormCallback: PayFormCallback;
+  let childFrame: Window;
+  let isFullscreenEnabled = false;
   const authFunction = getAuthFunction(apiURL);
 
   const onPayFormClose = (frame: Window, status: boolean) => {
@@ -22,25 +24,39 @@ export default (qilinProductUUID: string, apiURL: string) => {
     payFormCallback = callback;
   };
 
+  const payFormListener = (event: MessageEvent) => {
+    if (!payFormCallback) return;
+
+    const frame = event.source as Window;
+    const { data = {} } = event;
+    const { type, payload = {} } = data;
+    if (type !== SHOW_PAYMENT_FORM) return;
+    const { qilinProductUUID, userId, itemId } = payload;
+
+    payFormCallback(qilinProductUUID, userId, itemId)
+      .then(status => {
+        onPayFormClose(frame, status);
+      })
+      .catch(err => {
+        console.error(err);
+        onPayFormClose(frame, false);
+      });
+  };
+
+  const fullScreenListener = (event: MessageEvent) => {
+    const { data = {} } = event;
+    const { type } = data;
+    if (type === ENABLE_FULLSCREEN) {
+      childFrame = event.source as Window;
+      isFullscreenEnabled = true;
+    }
+  };
+
+  const checkFullscreenSupport = () => isFullscreenEnabled;
+
   const onAuthSuccess = () => {
-    window.addEventListener('message', (event: MessageEvent) => {
-      if (!payFormCallback) return;
-
-      const frame = event.source as Window;
-      const { data = {} } = event;
-      const { type, payload = {} } = data;
-      if (type !== SHOW_PAYMENT_FORM) return;
-      const { qilinProductUUID, userId, itemId } = payload;
-
-      payFormCallback(qilinProductUUID, userId, itemId)
-        .then(status => {
-          onPayFormClose(frame, status);
-        })
-        .catch(err => {
-          console.error(err);
-          onPayFormClose(frame, false);
-        });
-    });
+    window.addEventListener('message', payFormListener);
+    window.addEventListener('message', fullScreenListener);
   };
 
   const init = async (inputMeta: any) => {
@@ -54,8 +70,20 @@ export default (qilinProductUUID: string, apiURL: string) => {
     }
   };
 
+  const setFullscreen = (fullscreen: boolean) => {
+    if (!childFrame) return;
+
+    const data = {
+      type: FULLSCREEN_MODE_CHANGED,
+      payload: { fullscreen },
+    };
+    childFrame.postMessage(data, '*');
+  };
+
   return {
     init,
     onShowPayForm,
+    setFullscreen,
+    checkFullscreenSupport,
   };
 };

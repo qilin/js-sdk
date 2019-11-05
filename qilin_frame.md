@@ -49,7 +49,7 @@ qilinFrameHelper.showPaymentForm(itemId, userId);
 После получения события, объект-хэлпер вызовет колбеки, которые будут повешены на закрытие платежной формы.
 
 ```
-const callback = (status: boolean) => {
+const callback = ({ status }) => {
   ...Запрос у сервера обновленного состояния
 };
 
@@ -57,3 +57,21 @@ qilinFrameHelper.addCallback(PAYMENT_FORM_CLOSED, callback);
 ```
 
 Где `PAYMENT_FORM_CLOSED` константа, доступная из SDK.
+
+### Полноэкранный режим
+
+Если игра умеет разворачиваться в полноэкранном режиме то с помощью хэлпера об этом можно сообщить родительской странице:
+
+```
+helper.enableFullscreenMode();
+```
+
+После этого можно будет подписаться на событие `FULLSCREEN_MODE_CHANGED`, Где `FULLSCREEN_MODE_CHANGED` константа, доступная из SDK.
+
+```
+const callback = ({ fullscreen }) => {
+  ...
+};
+
+helper.addCallback(FULLSCREEN_MODE_CHANGED, callback);
+```
