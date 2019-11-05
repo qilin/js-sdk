@@ -10,7 +10,10 @@
 <body style="background: grey; padding: 10%;">
   <h2>Parent page</h2>
   <button id="show_iframe">Открыть iframe</button>
-  <iframe id='game_iframe' style="width: 100%; height: 300px; display: none" frameborder="0"></iframe>
+  <div id="game_iframe" style="display: none">
+    <button id="fullscreen">[]</button>
+    <iframe style="width: 100%; height: 300px" frameborder="0" allowfullscreen></iframe>
+  </div>
   <script>
     // create SDK helper
     const helper = qilinGameParent('1', 'http://localhost:8084/sdk/v1');
@@ -29,16 +32,35 @@
         // Create iframe with src = url
         const showIframeButton = document.querySelector('#show_iframe');
         const gameIframe = document.querySelector('#game_iframe');
+        const fullscreenButton = document.querySelector('#fullscreen');
+        
+        fullscreenButton.onclick = (event) => {
+          // console.log(helper.checkFullscreenSupport());
+          if (!helper.checkFullscreenSupport()) return;
+
+          const elem = event.target.parentElement;
+          if (!document.fullscreenElement) {
+            elem.requestFullscreen()
+              .then(() => helper.setFullscreen(true))
+              .catch(err => {
+                alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+              });
+          } else {
+            document.exitFullscreen();
+            helper.setFullscreen(false);
+          }
+        };
         showIframeButton.onclick = () => {
           const isIframeVisible = gameIframe.style.display === 'block';
           gameIframe.style.display = isIframeVisible
             ? 'none'
             : 'block';
-          gameIframe.src = url;
+          gameIframe.querySelector('iframe').src = url;
           showIframeButton.textContent = isIframeVisible
             ? 'Открыть iframe'
             : 'Закрыть iframe'
         };
+
 
         helper.onShowPayForm(showPayment);
       })

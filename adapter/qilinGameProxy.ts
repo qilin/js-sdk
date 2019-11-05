@@ -1,23 +1,15 @@
-import { PROXY } from './constants';
 import openIframe from './openIframe';
 import qilinGameFrame from '../src/qilinGameFrame';
-import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM } from '../src/constants';
+import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from '../src/constants';
 
 export default (apiURL: string) => {
   if (!apiURL) throw new Error('Api URL is required, but not provided');
-
-  const proxy = qilinGameFrame(PROXY, apiURL);
+  const proxy = qilinGameFrame('PROXY', apiURL);
   let isGameInitialized = false;
   let gameFrame: Window;
 
-  const payFormCallback = (args: any) => {
-    if (!gameFrame) return;
-
-    const data = {
-      type: PAYMENT_FORM_CLOSED,
-      payload: args,
-    };
-    gameFrame.postMessage(data, '*');
+  const getProxyCallback = (type: string) => (payload: any) => {
+    if (gameFrame) gameFrame.postMessage({ type, payload }, '*');
   };
 
   const init = async (inputMeta: any) => {
@@ -32,14 +24,26 @@ export default (apiURL: string) => {
 
         const { data = {} } = event;
         const { type, payload } = data;
-        if (type !== SHOW_PAYMENT_FORM) return;
 
-        gameFrame = event.source as Window;
-        const { qilinProductUUID, userId, itemId } = payload;
-        proxy.showPaymentForm(itemId, userId, qilinProductUUID);
+        if (!type) return;
+
+        if (!gameFrame) {
+          // first event may be only from child frame
+          gameFrame = event.source as Window;
+        }
+
+        if (type === SHOW_PAYMENT_FORM) {
+          const { qilinProductUUID, userId, itemId } = payload;
+          proxy.showPaymentForm(itemId, userId, qilinProductUUID);
+        }
+
+        if (type === ENABLE_FULLSCREEN) {
+          proxy.enableFullscreenMode();
+        }
       });
 
-      proxy.addCallback(PAYMENT_FORM_CLOSED, payFormCallback);
+      proxy.addCallback(PAYMENT_FORM_CLOSED, getProxyCallback(PAYMENT_FORM_CLOSED));
+      proxy.addCallback(FULLSCREEN_MODE_CHANGED, getProxyCallback(FULLSCREEN_MODE_CHANGED));
     } catch (error) {
       console.error(error);
       throw error;

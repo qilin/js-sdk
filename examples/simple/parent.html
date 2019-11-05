@@ -39,11 +39,11 @@
 
           const elem = event.target.parentElement;
           if (!document.fullscreenElement) {
-          elem.requestFullscreen()
-            .then(() => helper.setFullscreen(true))
-            .catch(err => {
-              alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
+            elem.requestFullscreen()
+              .then(() => helper.setFullscreen(true))
+              .catch(err => {
+                alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+              });
           } else {
             document.exitFullscreen();
             helper.setFullscreen(false);
