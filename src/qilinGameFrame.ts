@@ -1,4 +1,4 @@
-import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED } from './constants';
+import { SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN } from './constants';
 import { Callback } from './types';
 import getAuthFunction from './getAuthFunction';
 
@@ -48,16 +48,28 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
     window.parent.postMessage(data, '*');
   };
 
+  const enableFullscreenMode = () => {
+    if (!isGameInitialized) {
+      alert('Game is not initialized!');
+      return;
+    }
+
+    window.parent.postMessage({ type: ENABLE_FULLSCREEN }, '*');
+  };
+
   window.addEventListener('message', (event: MessageEvent) => {
     if (!isGameInitialized) return;
 
     const { data = {} } = event;
     const { type, payload } = data;
 
-    if (type === PAYMENT_FORM_CLOSED) dispatchEvent(PAYMENT_FORM_CLOSED, payload);
+    if (!type) return;
+
+    dispatchEvent(type, payload);
   });
 
   return {
+    enableFullscreenMode,
     showPaymentForm,
     addCallback,
     init,
