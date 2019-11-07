@@ -1,4 +1,4 @@
-import openIframe from './openIframe';
+import openIframe from '../src/openIframe';
 import qilinGameFrame from '../src/qilinGameFrame';
 import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from '../src/constants';
 
