@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Rambler game</title>
+</head>
+<body>
+  <script src="./rgames.js"></script>
+  <h1>Rambler Game Page</h1>
+  <form id="payment_form">
+    <fieldset>
+      <legend>Item ID</legend>
+      <input type="text" name="itemId">
+    </fieldset>
+    <button type="submit">Купить</button>
+  </form>
+  <script>
+    rgames.init().
+      then(() => { 
+        rgames.enableFullscreenMode();
+        rgames.addCallback('onRequestFullscreen',()=> console.log('Fullscreen request'));
+
+        // Set callback, will called after close payment form on parent page.
+        rgames.addCallback('onOrderSuccess', args => console.log('Order success', args));
+        rgames.addCallback('onOrderBoxUserClose', () => console.log('Order not success'));
+
+        // Call showPaymentForm with form values
+        const onFormSubmit = event => {
+          event.preventDefault();
+          const form = event.target;
+          const { itemId } = form;
+          rgames.showOrderBox(itemId.value);
+          form.reset();
+        }
+
+        document.querySelector('#payment_form').onsubmit = onFormSubmit;
+      })
+      .catch(err => console.log(err));
+
+  </script>
+</body>
+</html>

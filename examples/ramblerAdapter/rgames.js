@@ -54,25 +54,25 @@
         }), Promise.resolve()
       },
       showOrderBox: function (e) {
-        window.top.postMessage({
+        window.parent.postMessage({
           method: "rgames-showOrderBox",
           data: e
         }, "*")
       },
       closeOrderBox: function (e) {
-        window.top.postMessage({
+        window.parent.postMessage({
           method: "rgames-closeOrderBox",
           data: e
         }, "*")
       },
       resizeWindow: function (e) {
-        window.top.postMessage({
+        window.parent.postMessage({
           method: "rgames-resizeWindow",
           data: e
         }, "*")
       },
       enableFullscreenMode: function () {
-        window.top.postMessage({
+        window.parent.postMessage({
           method: "rgames-fullscreenEnable"
         }, "*")
       },
