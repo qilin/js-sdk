@@ -16,7 +16,7 @@
 <body>
   <script>
     // if (window.top !== window.window) window.top.location.href = location.href;
-    const helper = qilinGameProxy('http://localhost:8084/sdk/v1');  
+    const helper = ramblerGameProxy('http://localhost:8084/sdk/v1');  
     helper.init({ url: './game.html' })
       .then(() => console.log('Rambler Adapter was started'))
       .catch(err => console.log(err));
