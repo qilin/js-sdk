@@ -16,6 +16,7 @@ export default (apiURL: string) => {
     if (!gameFrame) return;
 
     const { status } = payload;
+    console.log('Gamenet Adapter Payform status: ', status);
     const message = JSON.stringify({ method: status ? ON_SUCCESS_BUY : ON_CANCELL_BUY });
     gameFrame.postMessage(message, '*');
   };
@@ -31,24 +32,26 @@ export default (apiURL: string) => {
         if (!isGameInitialized) return;
 
         const { data = {} } = event;
-        const { method, ...rest } = JSON.parse(data);
+        if (typeof data === 'string') {
+          const { method, ...rest } = JSON.parse(data);
 
-        if (!method) return;
+          if (!method) return;
 
-        if (!gameFrame) {
-          // first event may be only from child frame
-          gameFrame = event.source as Window;
-        }
+          if (!gameFrame) {
+            // first event may be only from child frame
+            gameFrame = event.source as Window;
+          }
 
-        if (method === BUY_ITEM) {
-          const { itemId } = rest;
-          proxy.showPaymentForm(itemId, '', '');
+          if (method === BUY_ITEM) {
+            const { itemId } = rest;
+            proxy.showPaymentForm(itemId, '', '');
+          }
         }
       });
 
       proxy.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
     } catch (error) {
-        console.error(error);
+      console.error(error);
       throw error;
     }
   };
