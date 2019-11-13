@@ -1,8 +1,9 @@
-export default (apiURL: string) => async (meta: any, url: string, qilinProductUUID?: string) => {
-  const data: { [key: string]: any } = { meta, url };
-  if (qilinProductUUID) {
-    data.qilinProductUUID = qilinProductUUID;
-  }
+import { AuthFunctionProps } from 'types';
+
+export default (apiURL: string) => async (props: AuthFunctionProps) => {
+  const { meta, url, qilinProductUID } = props;
+  const data = { meta, url, qilinProductUID };
+
   try {
     const response = await fetch(`${apiURL}/auth`, {
       method: 'POST',

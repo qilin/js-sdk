@@ -15,9 +15,10 @@
 </head>
 <body>
   <script>
-    // if (window.top !== window.window) window.top.location.href = location.href;
-    const helper = qilinGameProxy('http://localhost:8084/sdk/v1');  
-    helper.init({ url: './frame.html?token=gjkgjhgijhjjh' })
+    qilinProxy.init({
+      meta: { url: './frame.html?token=gjkgjhgijhjjh' },
+      apiURL: 'http://localhost:8084/sdk/v1',
+    })
       .then(() => console.log('Adapter was started'))
       .catch(err => console.log(err));
   </script>

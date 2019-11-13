@@ -1,20 +1,29 @@
 import openIframe from '../src/openIframe';
-import qilinGameFrame from '../src/qilinGameFrame';
+import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from '../src/constants';
+import { ProxyInitProps } from '../src/types';
 
-export default (apiURL: string) => {
-  if (!apiURL) throw new Error('Api URL is required, but not provided');
-  const proxy = qilinGameFrame('PROXY', apiURL);
+const getQilinProxy = () => {
   let isGameInitialized = false;
   let gameFrame: Window;
+  let apiURL: string;
 
   const getProxyCallback = (type: string) => (payload: any) => {
     if (gameFrame) gameFrame.postMessage({ type, payload }, '*');
   };
 
-  const init = async (inputMeta: any) => {
+  const init = async (props: ProxyInitProps) => {
+    apiURL = props.apiURL;
+
+    if (!apiURL) throw new Error('Api URL is required, but not provided');
+
     try {
-      const meta = await proxy.init(inputMeta);
+      const meta = await qilinGame.init({
+        meta: props.meta,
+        qilinProductUID: 'PROXY',
+        apiURL,
+      });
+
       const { url } = meta;
       isGameInitialized = true;
       openIframe(url);
@@ -33,17 +42,16 @@ export default (apiURL: string) => {
         }
 
         if (type === SHOW_PAYMENT_FORM) {
-          const { qilinProductUUID, userId, itemId } = payload;
-          proxy.showPaymentForm(itemId, userId, qilinProductUUID);
+          qilinGame.showPaymentForm(payload);
         }
 
         if (type === ENABLE_FULLSCREEN) {
-          proxy.enableFullscreenMode();
+          qilinGame.enableFullscreenMode();
         }
       });
 
-      proxy.addCallback(PAYMENT_FORM_CLOSED, getProxyCallback(PAYMENT_FORM_CLOSED));
-      proxy.addCallback(FULLSCREEN_MODE_CHANGED, getProxyCallback(FULLSCREEN_MODE_CHANGED));
+      qilinGame.addCallback(PAYMENT_FORM_CLOSED, getProxyCallback(PAYMENT_FORM_CLOSED));
+      qilinGame.addCallback(FULLSCREEN_MODE_CHANGED, getProxyCallback(FULLSCREEN_MODE_CHANGED));
     } catch (error) {
       console.error(error);
       throw error;
@@ -53,3 +61,5 @@ export default (apiURL: string) => {
     init,
   };
 };
+
+export default getQilinProxy();

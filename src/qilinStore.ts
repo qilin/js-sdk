@@ -1,16 +1,15 @@
-import { PayFormCallback } from 'types';
+import { PayFormCallback, HostInitProps, AuthFunction } from 'types';
 import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from './constants';
 import getAuthFunction from './getAuthFunction';
 
-export default (qilinProductUUID: string, apiURL: string) => {
-  if (!qilinProductUUID) throw new Error('Game UID is required, but not provided');
-  if (!apiURL) throw new Error('Api URL is required, but not provided');
-
+const getQilinStore = () => {
   const queryString = window.location.href;
   let payFormCallback: PayFormCallback;
   let childFrame: Window;
   let isFullscreenEnabled = false;
-  const authFunction = getAuthFunction(apiURL);
+  let qilinProductUID: string;
+  let apiURL: string;
+  let authFunction: AuthFunction;
 
   const onPayFormClose = (frame: Window, status: boolean) => {
     const data = {
@@ -31,9 +30,9 @@ export default (qilinProductUUID: string, apiURL: string) => {
     const { data = {} } = event;
     const { type, payload = {} } = data;
     if (type !== SHOW_PAYMENT_FORM) return;
-    const { qilinProductUUID, userId, itemId } = payload;
+    const { qilinProductUID, userId, itemId } = payload;
 
-    payFormCallback(qilinProductUUID, userId, itemId)
+    payFormCallback({ qilinProductUID, userId, itemId })
       .then(status => {
         onPayFormClose(frame, status);
       })
@@ -59,9 +58,21 @@ export default (qilinProductUUID: string, apiURL: string) => {
     window.addEventListener('message', fullScreenListener);
   };
 
-  const init = async (inputMeta: any) => {
+  const init = async (props: HostInitProps) => {
+    qilinProductUID = props.qilinProductUID;
+    apiURL = props.apiURL;
+
+    if (!qilinProductUID) throw new Error('Game UID is required, but not provided');
+    if (!apiURL) throw new Error('Api URL is required, but not provided');
+
+    authFunction = getAuthFunction(apiURL);
+
     try {
-      const meta = await authFunction(inputMeta, queryString, qilinProductUUID);
+      const meta = await authFunction({
+        meta: props.meta,
+        url: queryString,
+        qilinProductUID,
+      });
       onAuthSuccess();
       return meta;
     } catch (error) {
@@ -87,3 +98,5 @@ export default (qilinProductUUID: string, apiURL: string) => {
     checkFullscreenSupport,
   };
 };
+
+export default getQilinStore();
