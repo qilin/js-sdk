@@ -15,9 +15,11 @@
 </head>
 <body>
   <script>
-    const helper = qilinProxy('http://localhost:8084/sdk/v1');  
-    helper.init()
-      .then(() => console.log('Adapter was started'))
+    qilinGamenetAdapter.init({
+      apiURL: 'http://localhost:8084/sdk/v1',
+      meta: { url: './game.html?token=gjkgjhgijhjjh' },
+    })
+      .then(() => console.log('Gamenet adapter was started'))
       .catch(err => console.log(err));
   </script>
 </body>

@@ -22,7 +22,7 @@
     });
 
     // init SDK helper
-    qilinHost.init({
+    qilinStore.init({
       qilinProductUID: '1',
       apiURL: 'http://localhost:8084/sdk/v1',
       meta: { url: './frame.html?jwt=hghgkgkhj' },
@@ -61,7 +61,7 @@
             : 'Закрыть iframe'
         };
 
-        qilinHost.onShowPayForm(showPayment);
+        qilinStore.onShowPayForm(showPayment);
       });
   </script>
 </body>

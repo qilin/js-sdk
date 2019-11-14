@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Rambler game</title>
+</head>
+<body>
+  <h1>Rambler Game Page</h1>
+  <form id="payment_form">
+    <fieldset>
+      <legend>Item ID</legend>
+      <input type="text" name="itemId">
+    </fieldset>
+    <button type="submit">Купить</button>
+  </form>
+  <script>
+    const ON_SUCCESS_BUY = 'onSuccessBuy';
+    const ON_CANCELL_BUY = 'onCancelBuy';
+    
+    // Call showPaymentForm with form values
+    const onFormSubmit = event => {
+      event.preventDefault();
+      const form = event.target;
+      const { itemId } = form;
+      window.parent.postMessage(JSON.stringify({
+        method: 'buyItem',
+        itemId: itemId.value,
+      }), '*');
+      form.reset();
+    };
+
+    window.addEventListener('message', event => {
+      try {
+        const { method } = JSON.parse(event.data);
+
+        console.log(method);
+      } catch (error) {
+        console.log(error);
+      }
+    })
+
+    document.querySelector('#payment_form').onsubmit = onFormSubmit;
+    
+  </script>
+</body>
+</html>

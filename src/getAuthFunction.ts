@@ -1,14 +1,11 @@
 import { AuthFunctionProps } from 'types';
 
 export default (apiURL: string) => async (props: AuthFunctionProps) => {
-  const { meta, url, qilinProductUID } = props;
-  const data = { meta, url, qilinProductUID };
-
   try {
     const response = await fetch(`${apiURL}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(props),
     });
 
     const json = await response.json();

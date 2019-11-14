@@ -1,15 +1,14 @@
 import openIframe from '../src/openIframe';
-import qilinGameFrame from '../src/qilinGameFrame';
+import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED } from '../src/constants';
+import { ProxyInitProps } from '../src/types';
 
 const SHOW_ORDER_BOX = 'rgames-showOrderBox';
 const ON_ORDER_SUCCESS = 'onOrderSuccess';
 const ON_ORDER_BOX_CLOSE = 'onOrderBoxUserClose';
 const FULLSCREEN_ENABLE = 'rgames-fullscreenEnable';
 
-export default (apiURL: string) => {
-  if (!apiURL) throw new Error('Api URL is required, but not provided');
-  const proxy = qilinGameFrame('PROXY', apiURL);
+const getQilinRamblerAdapter = () => {
   let isGameInitialized = false;
   let gameFrame: Window;
 
@@ -22,9 +21,17 @@ export default (apiURL: string) => {
     gameFrame.postMessage(message, '*');
   };
 
-  const init = async (inputMeta: any) => {
+  const init = async (props: ProxyInitProps) => {
+    const { apiURL } = props;
+    if (!apiURL) throw new Error('Api URL is required, but not provided');
+
     try {
-      const meta = await proxy.init(inputMeta);
+      const meta = await qilinGame.init({
+        qilinProductUID: 'PROXY',
+        meta: props.meta,
+        apiURL,
+      });
+
       const { url } = meta;
       isGameInitialized = true;
       openIframe(url);
@@ -44,15 +51,19 @@ export default (apiURL: string) => {
         }
 
         if (method === SHOW_ORDER_BOX) {
-          proxy.showPaymentForm(data.data, '', '');
+          qilinGame.showPaymentForm({
+            qilinProductUID: 'PROXY',
+            userId: '',
+            itemId: data.data,
+          });
         }
 
         if (method === FULLSCREEN_ENABLE) {
-          proxy.enableFullscreenMode();
+          qilinGame.enableFullscreenMode();
         }
       });
 
-      proxy.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
+      qilinGame.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
     } catch (error) {
       console.error(error);
       throw error;
@@ -62,3 +73,5 @@ export default (apiURL: string) => {
     init,
   };
 };
+
+export default getQilinRamblerAdapter();

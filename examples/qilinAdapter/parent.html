@@ -22,10 +22,10 @@
     });
 
     // init SDK helper
-    qilinHost.init({
+    qilinStore.init({
       qilinProductUID: '1',
       apiURL: 'http://localhost:8084/sdk/v1',
-      meta: { url: './frame.html?jwt=hghgkgkhj' },
+      meta: { url: './adapter.html?jwt=hghgkgkhj' },
     })
       .then(meta => {
         const { url } = meta;
@@ -36,18 +36,18 @@
         const fullscreenButton = document.querySelector('#fullscreen');
         
         fullscreenButton.onclick = (event) => {
-          if (!qilinHost.checkFullscreenSupport()) return;
+          if (!qilinStore.checkFullscreenSupport()) return;
 
           const elem = event.target.parentElement;
           if (!document.fullscreenElement) {
             elem.requestFullscreen()
-              .then(() => qilinHost.setFullscreen(true))
+              .then(() => qilinStore.setFullscreen(true))
               .catch(err => {
                 alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
               });
           } else {
             document.exitFullscreen();
-            qilinHost.setFullscreen(false);
+            qilinStore.setFullscreen(false);
           }
         };
         showIframeButton.onclick = () => {
@@ -61,7 +61,7 @@
             : 'Закрыть iframe'
         };
 
-        qilinHost.onShowPayForm(showPayment);
+        qilinStore.onShowPayForm(showPayment);
       });
   </script>
 </body>

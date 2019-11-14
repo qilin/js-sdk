@@ -3,7 +3,7 @@ import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from '../src/constants';
 import { ProxyInitProps } from '../src/types';
 
-const getQilinProxy = () => {
+const getQilinHub = () => {
   let isGameInitialized = false;
   let gameFrame: Window;
   let apiURL: string;
@@ -62,4 +62,4 @@ const getQilinProxy = () => {
   };
 };
 
-export default getQilinProxy();
+export default getQilinHub();
