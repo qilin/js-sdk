@@ -1,4 +1,5 @@
 import fetchMock from 'fetch-mock';
+
 import getAuthFunction from '../getAuthFunction';
 
 const apiURL = 'http://test.com';
