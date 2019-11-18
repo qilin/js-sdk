@@ -1,29 +1,42 @@
 import openIframe from '../src/openIframe';
-import qilinGameFrame from '../src/qilinGameFrame';
+import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED } from '../src/constants';
+import { ProxyInitProps } from '../src/types';
+import logError from '../src/logError';
 
 const BUY_ITEM = 'buyItem';
 const ON_SUCCESS_BUY = 'onSuccessBuy';
 const ON_CANCELL_BUY = 'onCancelBuy';
 
-export default (apiURL: string) => {
-  if (!apiURL) throw new Error('Api URL is required, but not provided');
-  const proxy = qilinGameFrame('PROXY', apiURL);
+const getGamenetAdapter = () => {
   let isGameInitialized = false;
   let gameFrame: Window;
+  let apiURL: string;
 
   const payFormClosedCallback = (payload: any) => {
     if (!gameFrame) return;
 
     const { status } = payload;
-    console.log('Gamenet Adapter Payform status: ', status);
     const message = JSON.stringify({ method: status ? ON_SUCCESS_BUY : ON_CANCELL_BUY });
     gameFrame.postMessage(message, '*');
   };
 
-  const init = async (inputMeta: any) => {
+  const init = async (props: ProxyInitProps) => {
+    apiURL = props.apiURL;
+
+    if (!apiURL) {
+      const error = new Error('Api URL is required, but not provided');
+      logError(error);
+      throw error;
+    }
+
     try {
-      const meta = await proxy.init(inputMeta);
+      const meta = await qilinGame.init({
+        meta: props.meta,
+        qilinProductUID: 'PROXY',
+        apiURL,
+      });
+
       const { url } = meta;
       isGameInitialized = true;
       openIframe(url);
@@ -32,6 +45,7 @@ export default (apiURL: string) => {
         if (!isGameInitialized) return;
 
         const { data = {} } = event;
+
         if (typeof data === 'string') {
           const { method, ...rest } = JSON.parse(data);
 
@@ -43,19 +57,19 @@ export default (apiURL: string) => {
           }
 
           if (method === BUY_ITEM) {
-            const { itemId } = rest;
-            proxy.showPaymentForm(itemId, '', '');
+            qilinGame.showPaymentForm(rest);
           }
         }
       });
 
-      proxy.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
+      qilinGame.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
     } catch (error) {
-      console.error(error);
-      throw error;
+      logError(error);
     }
   };
   return {
     init,
   };
 };
+
+export default getGamenetAdapter();

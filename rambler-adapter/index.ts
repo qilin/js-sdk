@@ -1,5 +1,10 @@
-import ramblerGameProxy from './ramblerGameProxy';
+import qilinRamblerAdapter from './qilinRamblerAdapter';
+import logError from '../src/logError';
 
-if (!window) throw new Error('SDK only work on web browser');
+if (!window) {
+  const error = new Error('SDK only work on web browser');
+  logError(error);
+  throw error;
+}
 
-(window as any).ramblerGameProxy = ramblerGameProxy;
+(window as any).qilinRamblerAdapter = qilinRamblerAdapter;

@@ -1,6 +1,15 @@
 В данной папке реализованы примеры использования SDK.
 
-Файл [простой пример](examples/simple/parent.html) или [пример с адаптером](examples/withAdapter/parent.html) необходимо открыть в браузере. 
+Перед запуском примеров необходимо собрать `sdk` и соответствующие адаптеры.
+
+`build` - сборка `sdk`,
+`build:adapter` - сборка `qilin` адаптера,
+`build:adapter:gamenet` - сборка `gamenet` адаптера,
+`build:adapter:rambler`: сборка `rambler` адаптера.
+
+Файл [простой пример](simple/parent.html),
+[пример с адаптером](withAdapter/parent.html),
+[пример с gamenet адаптером](gamenetAdapter/index.html) или [пример с адаптером](ramblerAdapter/index.html) необходимо открыть в браузере. 
 На странице будет кнопка, при нажатии на которую откроется окно с iframe, адрес которого
 буден получен с помощью SDK (в примере он статичный)
 

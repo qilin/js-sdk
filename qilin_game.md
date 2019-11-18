@@ -1,16 +1,23 @@
 ### Авторизация
 
 ```
-const qilinFrameHelper = qilinGameFrame(
-  qilinProductUUID: string,
+qilinGame.init({
+  qilinProductUID: string,
   apiURL: string,
+  meta?: any,
   onAuth?: (meta: any, url: string) => Promise
-);
+}).then((meta: any) => {
+    ... Код игры
+  })
+  .catch(error => {
+    ... Обработка ошибки авторизации
+  });
 ```
 
-Создаем объект-хэлпер внутри тега script в iframe с игрой.
-Где `qilinProductUUID` - уникальный `uid` игры в базе `qilin`,
+Инициализируем объект-хэлпера внутри тега script в iframe с игрой.
+Где `qilinProductUID` - уникальный `uid` игры в базе `qilin`,
 `apiURL` - адрес сервера`qilin`,
+`meta` - какие - то метаданные,
 а `onAuth` - функция авторизации, опциональный параметр. Если передается, то используется для авторизации. Если нет, то для авторизации используется функция по умолчанию, которая обращается к бэкенду `qilin` и возвращает промисс, который резолвится в объект вида:
 
 ```
@@ -22,24 +29,12 @@ interface response {
 ```
 Где `code` код ответа от сервера, `meta` - метаинформация, которая будет передана в игру после инициализации, а `msg` - опциональный параметр - какое-то сообщение или реджектится в ошибку.
 
-Для запуска авторизации вызываем метод `init` у объекта-хэлпера.
-
-```
-qilinFrameHelper.init()
-  .then((meta: any) => {
-    ... Код игры
-  })
-  .catch(error => {
-    ... Обработка ошибки авторизации
-  })
-```
-
 ### Биллинг
 
 Для вызова платежной формы необходимо вызвать метод `showPaymentForm` у объекта-хэлпера
 
 ```
-qilinFrameHelper.showPaymentForm(itemId, userId);
+qilinGame.showPaymentForm(itemId, userId);
 ```
 
 После этого, данные вместе с `qilinProductUUID` будут с помощью `postMessage` отправлены в окно, открывшее iframe, и далее сервер-то-сервер обработка биллинга.
@@ -53,7 +48,7 @@ const callback = ({ status }) => {
   ...Запрос у сервера обновленного состояния
 };
 
-qilinFrameHelper.addCallback(PAYMENT_FORM_CLOSED, callback);
+qilinGame.addCallback(PAYMENT_FORM_CLOSED, callback);
 ```
 
 Где `PAYMENT_FORM_CLOSED` константа, доступная из SDK.
@@ -63,7 +58,7 @@ qilinFrameHelper.addCallback(PAYMENT_FORM_CLOSED, callback);
 Если игра умеет разворачиваться в полноэкранном режиме то с помощью хэлпера об этом можно сообщить родительской странице:
 
 ```
-helper.enableFullscreenMode();
+qilinGame.enableFullscreenMode();
 ```
 
 После этого можно будет подписаться на событие `FULLSCREEN_MODE_CHANGED`, Где `FULLSCREEN_MODE_CHANGED` константа, доступная из SDK.
@@ -73,5 +68,5 @@ const callback = ({ fullscreen }) => {
   ...
 };
 
-helper.addCallback(FULLSCREEN_MODE_CHANGED, callback);
+qilinGame.addCallback(FULLSCREEN_MODE_CHANGED, callback);
 ```

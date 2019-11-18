@@ -15,17 +15,18 @@
     <iframe style="width: 100%; height: 300px" frameborder="0" allowfullscreen></iframe>
   </div>
   <script>
-    // create SDK helper
-    const helper = qilinGameParent('1', 'http://localhost:8084/sdk/v1');
-
     // create PayFormCallback
-    const showPayment = (...args) => new Promise(resolve => {
-      const status = confirm(args);
+    const showPayment = (args) => new Promise(resolve => {
+      const status = confirm(JSON.stringify(args));
       resolve(status);
     });
 
     // init SDK helper
-    helper.init({ url: './frame.html?jwt=hghgkgkhj' })
+    qilinStore.init({
+      qilinProductUID: '1',
+      apiURL: 'http://localhost:8084/sdk/v1',
+      meta: { url: './frame.html?jwt=hghgkgkhj' },
+    })
       .then(meta => {
         const { url } = meta;
 
@@ -35,18 +36,18 @@
         const fullscreenButton = document.querySelector('#fullscreen');
         
         fullscreenButton.onclick = (event) => {
-          if (!helper.checkFullscreenSupport()) return;
+          if (!qilinHost.checkFullscreenSupport()) return;
 
           const elem = event.target.parentElement;
           if (!document.fullscreenElement) {
             elem.requestFullscreen()
-              .then(() => helper.setFullscreen(true))
+              .then(() => qilinHost.setFullscreen(true))
               .catch(err => {
                 alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
               });
           } else {
             document.exitFullscreen();
-            helper.setFullscreen(false);
+            qilinHost.setFullscreen(false);
           }
         };
         showIframeButton.onclick = () => {
@@ -60,8 +61,8 @@
             : 'Закрыть iframe'
         };
 
-        helper.onShowPayForm(showPayment);
-      })
+        qilinStore.onShowPayForm(showPayment);
+      });
   </script>
 </body>
 </html>

@@ -5,12 +5,12 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "parcel build src/index.ts --out-file sdk-qilin.js && cp dist/sdk-qilin.js examples/simple/ && cp dist/sdk-qilin.js examples/qilinAdapter/ && cp dist/sdk-qilin.js examples/gamenetAdapter/ && cp dist/sdk-qilin.js examples/ramblerAdapter/",
-    "build:dev": "parcel build src/index.ts --no-minify --out-file sdk-qilin.js",
+    "build:dev": "NODE_ENV=development parcel build src/index.ts --no-minify --out-file sdk-qilin.js && cp dist/sdk-qilin.js examples/simple/ && cp dist/sdk-qilin.js examples/qilinAdapter/ && cp dist/sdk-qilin.js examples/gamenetAdapter/ && cp dist/sdk-qilin.js examples/ramblerAdapter/",
     "build:adapter": "parcel build adapter/index.ts --out-file qilin-store-adapter.js && cp dist/qilin-store-adapter.js examples/qilinAdapter/ && cp dist/qilin-store-adapter.js examples/ramblerAdapter/ && cp dist/qilin-store-adapter.js examples/gamenetAdapter/",
     "build:adapter:gamenet": "parcel build gamenet-adapter/index.ts --out-file gamenet-adapter.js && cp dist/gamenet-adapter.js examples/gamenetAdapter/",
     "build:adapter:rambler": "parcel build rambler-adapter/index.ts --out-file rambler-adapter.js && cp dist/rambler-adapter.js examples/ramblerAdapter/",
     "lint": "eslint './**/*.{ts,tsx}'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -34,12 +34,22 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/node-fetch": "^2.5.3",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
     "eslint": "^6.4.0",
+    "fetch-mock": "^8.0.0",
     "husky": "^3.0.5",
+    "jest": "^24.9.0",
+    "jest-fetch-mock": "^2.1.2",
     "lint-staged": "^9.3.0",
+    "node-fetch": "^2.6.0",
     "parcel-bundler": "^1.12.4",
+    "ts-jest": "^24.1.0",
     "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "@sentry/browser": "5.9.0"
   }
 }

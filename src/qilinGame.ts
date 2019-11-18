@@ -1,27 +1,14 @@
 import { SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN } from './constants';
-import { Callback } from './types';
+import { Callback, GameInitProps, PayFormCallbackProps } from './types';
 import getAuthFunction from './getAuthFunction';
+import logError from './logError';
 
-export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, url: string) => any) => {
-  if (!qilinProductUUID) throw new Error('Game UID is required, but not provided');
-  if (!apiURL) throw new Error('Api URL is required, but not provided');
-
+const getQilinGame = () => {
   const queryString = window.location.href;
   const callbacks: { [key: string]: Callback[] } = {};
   let isGameInitialized = false;
-  const defaultAuth = getAuthFunction(apiURL);
-
-  const init = async (inputMeta: any) => {
-    try {
-      const authFunction = onAuth || defaultAuth;
-      const meta = await authFunction(inputMeta, queryString);
-      isGameInitialized = true;
-      return meta;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+  let qilinProductUID: string;
+  let apiURL: string;
 
   const dispatchEvent = (eventType: string, args: any) => {
     const eventCallbacks = callbacks[eventType];
@@ -35,7 +22,7 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
     callbacks[eventType] = eventCallbacks;
   };
 
-  const showPaymentForm = (itemId: string, userId: string, productUID?: string) => {
+  const showPaymentForm = (props: PayFormCallbackProps) => {
     if (!isGameInitialized) {
       alert('Game is not initialized!');
       return;
@@ -43,7 +30,7 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
 
     const data = {
       type: SHOW_PAYMENT_FORM,
-      payload: { qilinProductUUID: productUID || qilinProductUUID, userId, itemId },
+      payload: { qilinProductUID, ...props },
     };
     window.parent.postMessage(data, '*');
   };
@@ -68,6 +55,30 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
     dispatchEvent(type, payload);
   });
 
+  const init = async (props: GameInitProps) => {
+    qilinProductUID = props.qilinProductUID;
+    apiURL = props.apiURL;
+
+    if (!qilinProductUID || !apiURL) {
+      const error = new Error(apiURL ? 'Game UID is required, but not provided' : 'Api URL is required, but not provided');
+      logError(error);
+      throw error;
+    }
+
+    try {
+      const authFunction = props.onAuth || getAuthFunction(apiURL);
+      const meta = await authFunction({
+        meta: props.meta,
+        url: queryString,
+        qilinProductUID,
+      });
+      isGameInitialized = true;
+      return meta;
+    } catch (error) {
+      logError(error);
+    }
+  };
+
   return {
     enableFullscreenMode,
     showPaymentForm,
@@ -75,3 +86,5 @@ export default (qilinProductUUID: string, apiURL: string, onAuth?: (meta: any, u
     init,
   };
 };
+
+export default getQilinGame();
