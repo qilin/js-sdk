@@ -2,6 +2,7 @@ import openIframe from '../src/openIframe';
 import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED } from '../src/constants';
 import { ProxyInitProps } from '../src/types';
+import logError from '../src/logError';
 
 const BUY_ITEM = 'buyItem';
 const ON_SUCCESS_BUY = 'onSuccessBuy';
@@ -23,7 +24,11 @@ const getGamenetAdapter = () => {
   const init = async (props: ProxyInitProps) => {
     apiURL = props.apiURL;
 
-    if (!apiURL) throw new Error('Api URL is required, but not provided');
+    if (!apiURL) {
+      const error = new Error('Api URL is required, but not provided');
+      logError(error);
+      throw error;
+    }
 
     try {
       const meta = await qilinGame.init({
@@ -59,8 +64,7 @@ const getGamenetAdapter = () => {
 
       qilinGame.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
     } catch (error) {
-      console.error(error);
-      throw error;
+      logError(error);
     }
   };
   return {

@@ -2,6 +2,7 @@ import openIframe from '../src/openIframe';
 import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED, SHOW_PAYMENT_FORM, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from '../src/constants';
 import { ProxyInitProps } from '../src/types';
+import logError from '../src/logError';
 
 const getQilinHub = () => {
   let isGameInitialized = false;
@@ -15,7 +16,11 @@ const getQilinHub = () => {
   const init = async (props: ProxyInitProps) => {
     apiURL = props.apiURL;
 
-    if (!apiURL) throw new Error('Api URL is required, but not provided');
+    if (!apiURL) {
+      const error = new Error('Api URL is required, but not provided');
+      logError(error);
+      throw error;
+    }
 
     try {
       const meta = await qilinGame.init({
@@ -53,8 +58,7 @@ const getQilinHub = () => {
       qilinGame.addCallback(PAYMENT_FORM_CLOSED, getProxyCallback(PAYMENT_FORM_CLOSED));
       qilinGame.addCallback(FULLSCREEN_MODE_CHANGED, getProxyCallback(FULLSCREEN_MODE_CHANGED));
     } catch (error) {
-      console.error(error);
-      throw error;
+      logError(error);
     }
   };
   return {

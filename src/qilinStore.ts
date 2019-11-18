@@ -1,6 +1,7 @@
 import { PayFormCallback, HostInitProps, AuthFunction } from 'types';
 import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from './constants';
 import getAuthFunction from './getAuthFunction';
+import logError from './logError';
 
 const getQilinStore = () => {
   const queryString = window.location.href;
@@ -37,7 +38,7 @@ const getQilinStore = () => {
         onPayFormClose(frame, status);
       })
       .catch(err => {
-        console.error(err);
+        logError(err);
         onPayFormClose(frame, false);
       });
   };
@@ -62,8 +63,11 @@ const getQilinStore = () => {
     qilinProductUID = props.qilinProductUID;
     apiURL = props.apiURL;
 
-    if (!qilinProductUID) throw new Error('Game UID is required, but not provided');
-    if (!apiURL) throw new Error('Api URL is required, but not provided');
+    if (!qilinProductUID || !apiURL) {
+      const error = new Error(apiURL ? 'Game UID is required, but not provided' : 'Api URL is required, but not provided');
+      logError(error);
+      throw error;
+    }
 
     authFunction = getAuthFunction(apiURL);
 
@@ -76,8 +80,7 @@ const getQilinStore = () => {
       onAuthSuccess();
       return meta;
     } catch (error) {
-      console.error(error);
-      throw error;
+      logError(error);
     }
   };
 

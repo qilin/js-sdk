@@ -2,6 +2,7 @@ import openIframe from '../src/openIframe';
 import qilinGame from '../src/qilinGame';
 import { PAYMENT_FORM_CLOSED } from '../src/constants';
 import { ProxyInitProps } from '../src/types';
+import logError from '../src/logError';
 
 const SHOW_ORDER_BOX = 'rgames-showOrderBox';
 const ON_ORDER_SUCCESS = 'onOrderSuccess';
@@ -23,7 +24,12 @@ const getQilinRamblerAdapter = () => {
 
   const init = async (props: ProxyInitProps) => {
     const { apiURL } = props;
-    if (!apiURL) throw new Error('Api URL is required, but not provided');
+
+    if (!apiURL) {
+      const error = new Error('Api URL is required, but not provided');
+      logError(error);
+      throw error;
+    }
 
     try {
       const meta = await qilinGame.init({
@@ -65,8 +71,7 @@ const getQilinRamblerAdapter = () => {
 
       qilinGame.addCallback(PAYMENT_FORM_CLOSED, payFormClosedCallback);
     } catch (error) {
-      console.error(error);
-      throw error;
+      logError(error);
     }
   };
   return {

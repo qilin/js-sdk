@@ -1,4 +1,5 @@
 import { AuthFunctionProps } from 'types';
+import logError from './logError';
 
 export default (apiURL: string) => async (props: AuthFunctionProps) => {
   try {
@@ -11,7 +12,6 @@ export default (apiURL: string) => async (props: AuthFunctionProps) => {
     const json = await response.json();
     return json.meta;
   } catch (error) {
-    console.error(error);
-    throw error;
+    logError(error);
   }
 };
