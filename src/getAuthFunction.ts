@@ -1,4 +1,4 @@
-import { AuthFunctionProps } from 'types';
+import { AuthFunctionProps } from './types';
 import logError from './logError';
 
 export default (apiURL: string) => async (props: AuthFunctionProps) => {

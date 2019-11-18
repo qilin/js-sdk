@@ -1,4 +1,4 @@
-import { PayFormCallback, HostInitProps, AuthFunction } from 'types';
+import { PayFormCallback, HostInitProps, AuthFunction } from './types';
 import { SHOW_PAYMENT_FORM, PAYMENT_FORM_CLOSED, ENABLE_FULLSCREEN, FULLSCREEN_MODE_CHANGED } from './constants';
 import getAuthFunction from './getAuthFunction';
 import logError from './logError';
