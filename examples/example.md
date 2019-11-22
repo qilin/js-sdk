@@ -1,11 +1,16 @@
 В данной папке реализованы примеры использования SDK.
 
-Перед запуском примеров необходимо собрать `sdk` и соответствующие адаптеры.
+Перед запуском примеров:
+1. необходимо собрать `sdk` и соответствующие адаптеры.
 
 `build` - сборка `sdk`,
 `build:adapter` - сборка `qilin` адаптера,
 `build:adapter:gamenet` - сборка `gamenet` адаптера,
 `build:adapter:rambler`: сборка `rambler` адаптера.
+
+2. в папке `examples/echoserver` установить зависимости `yarn` или `npm i`
+
+3. запустить эхо-сервер `node examples/echoserver/index.js`.
 
 Файл [простой пример](simple/parent.html),
 [пример с адаптером](withAdapter/parent.html),
