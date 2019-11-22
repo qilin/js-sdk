@@ -5,6 +5,7 @@
 
 # dependencies
 /node_modules
+/examples/echoserver/node_modules
 /.pnp
 .pnp.js
 
@@ -15,6 +16,8 @@
 /build
 /dist
 /examples/**/*.js
+!/examples/echoserver/index.js
+!/examples/ramblerAdapter/rgames.js
 
 # misc
 .DS_Store
