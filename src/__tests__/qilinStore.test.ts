@@ -23,7 +23,7 @@ describe('QilinStore', () => {
       const meta = await qilinStore.init({
         apiURL,
         meta: {},
-        qilinProductUID: 'test',
+        qilinProductUUID: 'test',
       });
 
       expect(meta).toBe(mockMeta);

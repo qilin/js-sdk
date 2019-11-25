@@ -9,7 +9,7 @@ const getQilinStore = () => {
   let payFormCallback: PayFormCallback;
   let fullscreenCallback: () => void;
   let childFrame: Window;
-  let qilinProductUID: string;
+  let qilinProductUUID: string;
   let apiURL: string;
   let authFunction: AuthFunction;
 
@@ -36,9 +36,9 @@ const getQilinStore = () => {
     const { data = {} } = event;
     const { type, payload = {} } = data;
     if (type !== SHOW_PAYMENT_FORM) return;
-    const { qilinProductUID, userId, itemId } = payload;
+    const { qilinProductUUID, userId, itemId } = payload;
 
-    payFormCallback({ qilinProductUID, userId, itemId })
+    payFormCallback({ qilinProductUUID, userId, itemId })
       .then(status => {
         onPayFormClose(frame, status);
       })
@@ -63,10 +63,10 @@ const getQilinStore = () => {
   };
 
   const init = async (props: HostInitProps) => {
-    qilinProductUID = props.qilinProductUID;
+    qilinProductUUID = props.qilinProductUUID;
     apiURL = props.apiURL;
 
-    if (!qilinProductUID || !apiURL) {
+    if (!qilinProductUUID || !apiURL) {
       const error = new Error(apiURL ? 'Game UID is required, but not provided' : 'Api URL is required, but not provided');
       logError(error);
       throw error;
@@ -78,7 +78,7 @@ const getQilinStore = () => {
       const meta = await authFunction({
         meta: props.meta,
         url: queryString,
-        qilinProductUID,
+        qilinProductUUID,
       });
       onAuthSuccess();
       return meta;

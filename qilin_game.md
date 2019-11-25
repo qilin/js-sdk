@@ -2,7 +2,7 @@
 
 ```
 qilinGame.init({
-  qilinProductUID: string,
+  qilinProductUUID: string,
   apiURL: string,
   meta?: any,
   onAuth?: (meta: any, url: string) => Promise
@@ -15,7 +15,7 @@ qilinGame.init({
 ```
 
 Инициализируем объект-хэлпера внутри тега script в iframe с игрой.
-Где `qilinProductUID` - уникальный `uid` игры в базе `qilin`,
+Где `qilinProductUUID` - уникальный `uid` игры в базе `qilin`,
 `apiURL` - адрес сервера`qilin`,
 `meta` - какие - то метаданные,
 а `onAuth` - функция авторизации, опциональный параметр. Если передается, то используется для авторизации. Если нет, то для авторизации используется функция по умолчанию, которая обращается к бэкенду `qilin` и возвращает промисс, который резолвится в объект вида:

@@ -7,7 +7,7 @@ const getQilinGame = () => {
   const queryString = window.location.href;
   const callbacks: { [key: string]: Callback[] } = {};
   let isGameInitialized = false;
-  let qilinProductUID: string;
+  let qilinProductUUID: string;
   let apiURL: string;
 
   const dispatchEvent = (eventType: string, args: any) => {
@@ -30,7 +30,7 @@ const getQilinGame = () => {
 
     const data = {
       type: SHOW_PAYMENT_FORM,
-      payload: { qilinProductUID, ...props },
+      payload: { qilinProductUUID, ...props },
     };
     window.parent.postMessage(data, '*');
   };
@@ -56,10 +56,10 @@ const getQilinGame = () => {
   });
 
   const init = async (props: GameInitProps) => {
-    qilinProductUID = props.qilinProductUID;
+    qilinProductUUID = props.qilinProductUUID;
     apiURL = props.apiURL;
 
-    if (!qilinProductUID || !apiURL) {
+    if (!qilinProductUUID || !apiURL) {
       const error = new Error(apiURL ? 'Game UID is required, but not provided' : 'Api URL is required, but not provided');
       logError(error);
       throw error;
@@ -70,7 +70,7 @@ const getQilinGame = () => {
       const meta = await authFunction({
         meta: props.meta,
         url: queryString,
-        qilinProductUID,
+        qilinProductUUID,
       });
       isGameInitialized = true;
       return meta;
