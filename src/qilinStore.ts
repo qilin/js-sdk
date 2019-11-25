@@ -7,8 +7,8 @@ import checkFlashEnabled from './checkFlashEnabled';
 const getQilinStore = () => {
   const queryString = window.location.href;
   let payFormCallback: PayFormCallback;
+  let fullscreenCallback: () => void;
   let childFrame: Window;
-  let isFullscreenEnabled = false;
   let qilinProductUID: string;
   let apiURL: string;
   let authFunction: AuthFunction;
@@ -25,8 +25,12 @@ const getQilinStore = () => {
     payFormCallback = callback;
   };
 
+  const onFullscreenModeEnabled = (callback: () => void) => {
+    fullscreenCallback = callback;
+  };
+
   const payFormListener = (event: MessageEvent) => {
-    if (!payFormCallback) return;
+    if (typeof payFormCallback !== 'function') return;
 
     const frame = event.source as Window;
     const { data = {} } = event;
@@ -49,11 +53,9 @@ const getQilinStore = () => {
     const { type } = data;
     if (type === ENABLE_FULLSCREEN) {
       childFrame = event.source as Window;
-      isFullscreenEnabled = true;
+      if (typeof fullscreenCallback === 'function') fullscreenCallback();
     }
   };
-
-  const checkFullscreenSupport = () => isFullscreenEnabled;
 
   const onAuthSuccess = () => {
     window.addEventListener('message', payFormListener);
@@ -98,8 +100,8 @@ const getQilinStore = () => {
   return {
     init,
     onShowPayForm,
+    onFullscreenModeEnabled,
     setFullscreen,
-    checkFullscreenSupport,
     checkFlashEnabled,
   };
 };

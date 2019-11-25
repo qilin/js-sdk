@@ -78,7 +78,7 @@
       </span>
     </button>
     <div id="game_iframe">
-      <span id="fullscreen">[ ]</span>
+      <span id="fullscreen" style="display: none">[ ]</span>
       <span id="closeFrame">X</span>
       <iframe style="width: 768px; height: 690px" frameborder="0" allowfullscreen></iframe>
     </div>      
@@ -112,8 +112,6 @@
         const closeIframeButton = document.querySelector('#closeFrame');
         
         fullscreenButton.onclick = (event) => {
-          if (!qilinStore.checkFullscreenSupport()) return;
-
           const elem = event.target.parentElement;
           if (!document.fullscreenElement) {
             elem.requestFullscreen()
@@ -133,6 +131,10 @@
           gameIframe.querySelector('iframe').src = url;
         };
         qilinStore.onShowPayForm(showPayment);
+        qilinStore.onFullscreenModeEnabled(() => {
+          fullscreenButton.style.display = 'block';
+          fullscreenButton.onclick = toggleFullscreen;
+        });
       })
       .catch(err => showError(err));
   </script>

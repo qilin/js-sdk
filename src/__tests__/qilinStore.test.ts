@@ -39,9 +39,9 @@ describe('QilinStore', () => {
       expect(qilinStore.setFullscreen).toBeDefined();
     });
   });
-  describe('CheckFullscreenSupport method', () => {
+  describe('onFullscreenModeEnabled method', () => {
     it('Method is defined', () => {
-      expect(qilinStore.checkFullscreenSupport).toBeDefined();
+      expect(qilinStore.onFullscreenModeEnabled).toBeDefined();
     });
   });
 });
