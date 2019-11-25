@@ -18,7 +18,7 @@ describe('getAuthFunction', () => {
     authFunction({
       url: '/test',
       meta: {},
-      qilinProductUID: 'test',
+      qilinProductUUID: 'test',
     });
     expect(fetchMock.called()).toBe(true);
   });

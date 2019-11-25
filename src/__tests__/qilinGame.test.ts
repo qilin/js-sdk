@@ -7,7 +7,7 @@ const mockMeta = 'test';
 const testProps = {
   apiURL,
   meta: {},
-  qilinProductUID: 'test',
+  qilinProductUUID: 'test',
 };
 
 beforeAll(() => {

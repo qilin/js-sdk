@@ -33,7 +33,8 @@ const getQilinRamblerAdapter = () => {
 
     try {
       const meta = await qilinGame.init({
-        qilinProductUID: 'PROXY',
+        // ToDo: Сервер проверяет qilinProductUUID на валидность uuid-v4. Пофиксить
+        qilinProductUUID: '3f49e992-2d08-4b95-9ee3-738063ea9365',
         meta: props.meta,
         apiURL,
       });
@@ -58,7 +59,7 @@ const getQilinRamblerAdapter = () => {
 
         if (method === SHOW_ORDER_BOX) {
           qilinGame.showPaymentForm({
-            qilinProductUID: 'PROXY',
+            qilinProductUUID: '',
             userId: '',
             itemId: data.data,
           });

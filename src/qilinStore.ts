@@ -7,9 +7,9 @@ import checkFlashEnabled from './checkFlashEnabled';
 const getQilinStore = () => {
   const queryString = window.location.href;
   let payFormCallback: PayFormCallback;
+  let fullscreenCallback: () => void;
   let childFrame: Window;
-  let isFullscreenEnabled = false;
-  let qilinProductUID: string;
+  let qilinProductUUID: string;
   let apiURL: string;
   let authFunction: AuthFunction;
 
@@ -25,16 +25,20 @@ const getQilinStore = () => {
     payFormCallback = callback;
   };
 
+  const onFullscreenModeEnabled = (callback: () => void) => {
+    fullscreenCallback = callback;
+  };
+
   const payFormListener = (event: MessageEvent) => {
-    if (!payFormCallback) return;
+    if (typeof payFormCallback !== 'function') return;
 
     const frame = event.source as Window;
     const { data = {} } = event;
     const { type, payload = {} } = data;
     if (type !== SHOW_PAYMENT_FORM) return;
-    const { qilinProductUID, userId, itemId } = payload;
+    const { qilinProductUUID, userId, itemId } = payload;
 
-    payFormCallback({ qilinProductUID, userId, itemId })
+    payFormCallback({ qilinProductUUID, userId, itemId })
       .then(status => {
         onPayFormClose(frame, status);
       })
@@ -49,11 +53,9 @@ const getQilinStore = () => {
     const { type } = data;
     if (type === ENABLE_FULLSCREEN) {
       childFrame = event.source as Window;
-      isFullscreenEnabled = true;
+      if (typeof fullscreenCallback === 'function') fullscreenCallback();
     }
   };
-
-  const checkFullscreenSupport = () => isFullscreenEnabled;
 
   const onAuthSuccess = () => {
     window.addEventListener('message', payFormListener);
@@ -61,10 +63,10 @@ const getQilinStore = () => {
   };
 
   const init = async (props: HostInitProps) => {
-    qilinProductUID = props.qilinProductUID;
+    qilinProductUUID = props.qilinProductUUID;
     apiURL = props.apiURL;
 
-    if (!qilinProductUID || !apiURL) {
+    if (!qilinProductUUID || !apiURL) {
       const error = new Error(apiURL ? 'Game UID is required, but not provided' : 'Api URL is required, but not provided');
       logError(error);
       throw error;
@@ -76,7 +78,7 @@ const getQilinStore = () => {
       const meta = await authFunction({
         meta: props.meta,
         url: queryString,
-        qilinProductUID,
+        qilinProductUUID,
       });
       onAuthSuccess();
       return meta;
@@ -98,8 +100,8 @@ const getQilinStore = () => {
   return {
     init,
     onShowPayForm,
+    onFullscreenModeEnabled,
     setFullscreen,
-    checkFullscreenSupport,
     checkFlashEnabled,
   };
 };

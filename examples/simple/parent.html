@@ -13,7 +13,7 @@
   <br>
   <a href="https://get.adobe.com/ru/flashplayer/" target="_blank" rel="noopener noreferrer"><span>Включить&nbsp;<span>ADOBE</span><br>FLASH PLAYER</span></a>
   <div id="game_iframe" style="display: none">
-    <button id="fullscreen">[]</button>
+    <button id="fullscreen" style="display: none">[]</button>
     <iframe style="width: 100%; height: 300px" frameborder="0" allowfullscreen></iframe>
   </div>
   <script>
@@ -25,7 +25,7 @@
 
     // init SDK helper
     qilinStore.init({
-      qilinProductUID: '1',
+      qilinProductUUID: '1',
       apiURL: 'http://localhost:9090/sdk/v1',
       meta: { url: './frame.html?jwt=hghgkgkhj' },
     })
@@ -36,22 +36,21 @@
         const showIframeButton = document.querySelector('#show_iframe');
         const gameIframe = document.querySelector('#game_iframe');
         const fullscreenButton = document.querySelector('#fullscreen');
-        
-        fullscreenButton.onclick = (event) => {
-          if (!qilinHost.checkFullscreenSupport()) return;
 
+        const toggleFullscreen = (event) => {
           const elem = event.target.parentElement;
           if (!document.fullscreenElement) {
             elem.requestFullscreen()
-              .then(() => qilinHost.setFullscreen(true))
+              .then(() => qilinStore.setFullscreen(true))
               .catch(err => {
                 alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
               });
           } else {
             document.exitFullscreen();
-            qilinHost.setFullscreen(false);
+            qilinStore.setFullscreen(false);
           }
         };
+
         showIframeButton.onclick = () => {
           const isIframeVisible = gameIframe.style.display === 'block';
           gameIframe.style.display = isIframeVisible
@@ -64,6 +63,10 @@
         };
 
         qilinStore.onShowPayForm(showPayment);
+        qilinStore.onFullscreenModeEnabled(() => {
+          fullscreenButton.style.display = 'block';
+          fullscreenButton.onclick = toggleFullscreen;
+        });
       });
   </script>
 </body>

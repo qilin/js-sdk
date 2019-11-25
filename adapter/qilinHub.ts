@@ -25,7 +25,8 @@ const getQilinHub = () => {
     try {
       const meta = await qilinGame.init({
         meta: props.meta,
-        qilinProductUID: 'PROXY',
+        // ToDo: Сервер проверяет qilinProductUUID на валидность uuid-v4. Пофиксить
+        qilinProductUUID: '3f49e992-2d08-4b95-9ee3-738063ea9365',
         apiURL,
       });
 
